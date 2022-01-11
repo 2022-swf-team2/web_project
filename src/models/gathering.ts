@@ -1,0 +1,20 @@
+import { IUser } from "./user";
+export interface IGathering {
+    id:string,
+    host:IUser,
+    over:boolean,
+    title:string,
+    category:string,
+    participant:number,
+    capacity:number,
+    openTime:string,
+    endTime:string,
+    location:string,
+    loactionDetail:string,
+    hostMessage:string,
+    tagList:string[],
+    previousImageList:string[],
+    applyList:IUser[],
+    approvalList:IUser[],
+    cancelList:IUser[],
+}
