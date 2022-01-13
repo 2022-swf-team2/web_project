@@ -6,6 +6,7 @@ const WrapNavi = styled.div`
     height: 100vh;
     display:flex;
     justify-content: stretch;
+    box-sizing:border-box;
 `;
 const WrapContent = styled.div`
     flex:1;

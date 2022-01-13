@@ -2,7 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { IUser } from "../../../models/user";
 import UserTableList from "./UserTableList";
-import UserTablePage from "./UserTablePage";
+import UserTablePage from "../../../components/UserTablePage";
+import { IdeleteCheckList } from "../UserScreen";
 
 const UserTableWrapContainer = styled.div`
     width: 100%;
@@ -29,14 +30,21 @@ const UserTableThead = styled.thead`
     font-weight: bold;
 `;
 const UserTableTBody = styled.tbody``;
-const UserTable = ({ userList }: { userList: IUser[] }) => {
-    console.log(userList);
+
+interface IUserTable {
+    userList: IUser[],
+    deleteCheckList:IdeleteCheckList[],
+    setDeleteCheckList:Function
+
+}
+const UserTable = ({ userList,deleteCheckList,setDeleteCheckList }: IUserTable) => {
     const pages: number[] = [];
     const [currentPage, setCurrentPage] = useState<number>(1);
     for (let i = 0; i <= ((userList.length - 1) / 10); i++) {
         pages.push(i + 1);
     }
     const pageUserList = userList.slice((currentPage - 1) * 10, (currentPage) * 10);
+    
     return (
         <UserTableWrapContainer>
             <UserTableContainer>
@@ -56,12 +64,15 @@ const UserTable = ({ userList }: { userList: IUser[] }) => {
                         return (
                             <UserTableList
                                 idx={idx + ((currentPage - 1) * 10)}
-                                signDate={user.signDate}
+                                signDate={user.timeStamp}
                                 name={user.name}
                                 phoneNumber={user.phoneNumber}
                                 job={user.job}
                                 status="일반"
                                 key={idx}
+                                id={user.id}
+                                deleteCheckList={deleteCheckList}
+                                setDeleteCheckList={setDeleteCheckList}
                             />);
                     })}
                 </UserTableTBody>

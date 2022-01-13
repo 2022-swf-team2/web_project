@@ -22,7 +22,7 @@ const NavigationContainer = styled.div<{opened:boolean}>`
 const NavigationTitleContainer = styled.div<{opened:boolean}>`
     width: 100%;
     box-sizing:border-box;
-    height: 100px;
+    height: 200px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -80,14 +80,15 @@ const NavigationBar = () => {
     }
     return (<NavigationContainer opened={open}>
         <NavigationTitleContainer opened={open} onClick={()=>handleClick("/home")}>
-            <AccentText style={{marginBottom:'12px'}}>{open ? 'COMMON' : 'C'}</AccentText>
-            <NormalText>{open ? '관리자 ADMIN' : ''}</NormalText>
+            <AccentText style={{color:"#9CD5FF",fontSize:"36px"}}>{open ? 'COMMON' : 'C'}</AccentText>
+            <AccentText style={{marginBottom:'32px',fontSize:"24px"}}>{open ? '커먼' : ''}</AccentText>
+            <NormalText style={{fontSize:"24px"}}>{open ? '관리자 ADMIN' : ''}</NormalText>
         </NavigationTitleContainer>
         <NavigationButtons>
-        <NavigationButton onClick={()=>handleClick("/user")} selected={pathname==="/user"}>
+        <NavigationButton onClick={()=>handleClick("/user")} selected={pathname.split('/')[1]==="user"}>
         {open ? '회원 관리' : <FaUser size="24"/>}
         </NavigationButton>
-        <NavigationButton selected={pathname==="/gather"}>
+        <NavigationButton onClick={()=>handleClick("/gather")} selected={pathname==="/gather"}>
             {open ? '모임 관리' : <GrGroup size="24"/> }
         </NavigationButton>
         <NavigationButton selected={pathname==="/event"}>

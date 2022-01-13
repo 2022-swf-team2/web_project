@@ -13,6 +13,12 @@ export const TableTd = styled.td`
     height: 10px;
     box-sizing:border-box;
 `;
+export const TableTitleTd = styled(TableTd)`
+    background-color: ${props=>props.theme.bgBlueColor};
+`;
+export const TableEnabledTd = styled(TableTd)`
+    background-color: #DADADA;
+`;
 export const TableThead = styled.thead`
     background-color  : ${props => props.theme.bgBlueColor};
     font-weight: bold;

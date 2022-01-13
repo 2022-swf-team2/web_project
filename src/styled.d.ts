@@ -7,5 +7,7 @@ declare module "styled-components" {
         bgGreyColor:string,
         bgYellowColor:string,
         bgYellowColor2:string,
+        bgRedColor:string,
+        bgPinkColor:string,
     }
 }
