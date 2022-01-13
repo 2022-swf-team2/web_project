@@ -6,7 +6,7 @@ import SearchTable from "../../components/SearchTable";
 import { DefaultButton, DeleteButton } from "../../styles/Button";
 import { GrDocumentExcel } from "react-icons/gr";
 import xlsx from 'xlsx';
-import { IUserExcel } from "../../models/user";
+import { IUser, IUserExcel } from "../../models/user";
 import { useEffect, useState } from "react";
 import { fetchUserData } from "../../fetch";
 import { userListAtom } from "../../atoms";
@@ -58,6 +58,8 @@ export interface IdeleteCheckList {
 const UserScreen = () => {
     const [userList,setUserList] = useRecoilState(userListAtom);
     const [deleteCheckList,setDeleteCheckList] = useState<IdeleteCheckList[]>([]);
+    const [loading,setLoading] = useState<boolean>(false);
+    const [showedUserList,setShowedUserList] = useState<IUser[]>([]);
     useEffect(()=>{  
         fetch(); 
     }
@@ -89,6 +91,7 @@ const UserScreen = () => {
     const fetch = async() => {
         const getUserList = await fetchUserData();
         const userDeleteList:IdeleteCheckList[] = [];
+        setLoading(true);
         getUserList.forEach((e)=>{
             userDeleteList.push({
                 id:e.id,
@@ -97,8 +100,10 @@ const UserScreen = () => {
         }
         );
         setUserList(getUserList);
+        setShowedUserList(getUserList);
         console.log(userDeleteList);
         setDeleteCheckList(userDeleteList);
+        setLoading(false);
     }     
     const deleteUserHanlder = async() => {
         let refresh:boolean = false;
@@ -117,11 +122,11 @@ const UserScreen = () => {
 
     return (
         <WrapNavigationContainer>
-            {userList.length<1 ? <span>loading...</span>:
+            {loading? <span>loading...</span>:
             <UserWrapContainer>
                 <TitleText >유저 관리</TitleText>
                 <UserContainer>
-                    <SearchTable />
+                    <SearchTable searchPart={0} setList={setShowedUserList} />
                     <UserTableWrapContainer>
                         <UserNumberTableButtonContainer>
                         <UserNumberTable userList={userList} />
@@ -134,7 +139,7 @@ const UserScreen = () => {
                             </DeleteButton>
                         </UserTableButtons>
                         </UserNumberTableButtonContainer>
-                        <UserTable userList={userList} deleteCheckList={deleteCheckList} setDeleteCheckList={setDeleteCheckList}/>
+                        <UserTable userList={showedUserList} deleteCheckList={deleteCheckList} setDeleteCheckList={setDeleteCheckList}/>
                     </UserTableWrapContainer>
                 </UserContainer>
             </UserWrapContainer>}   

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { userListAtom } from "../atoms";
 import { fetchUserData } from "../fetch";
@@ -70,9 +70,9 @@ interface IForm{
     name:string,
     phone:string,
 }
-const SearchTable = () => {
-    const {register,getValues} = useForm<IForm>();
-    const [userList,setUserList] = useRecoilState(userListAtom);
+const SearchTable = ({searchPart,setList}:{searchPart:number,setList:Function}) => {
+    const {register,getValues,setValue} = useForm<IForm>();
+    const userList = useRecoilValue(userListAtom);
     const SearchUser = async() => {
         let getUserCollection:IUser[] = await fetchUserData();
         if(!isDateTime(getValues("date_start"))||!isDateTime(getValues("date_end"))) {
@@ -104,9 +104,15 @@ const SearchTable = () => {
             );
         }
         console.log(getUserCollection);
-        setUserList(getUserCollection);
+        setList(getUserCollection);
     }
-    
+    const resetTable = () => {
+        setValue("date_start","");
+        setValue("date_end","");
+        setValue("name","");
+        setValue("phone","");
+        setList(userList);
+    }
     return (
         <SearchTableContainer>
             <LabelContainer>가입 일시</LabelContainer>
@@ -115,7 +121,7 @@ const SearchTable = () => {
                 <span style={{ color: "grey", fontSize: "20px" }}>~</span>
                 <SearchInputBox type="text" placeholder="YYYY.MM.DD" {...register("date_end")}/>
             </DateInputContainer>
-            <ResetButtonContainer>초기화</ResetButtonContainer>
+            <ResetButtonContainer onClick={()=>resetTable()}>초기화</ResetButtonContainer>
             <LabelContainer>닉네임</LabelContainer>
             <DefaultContainer>
                 <NickNameInputBox type="text" {...register("name",{

@@ -80,7 +80,7 @@ const GatherScreen = () => {
         {!gatheringList ? <span>Loading...</span>:
         <GatherWrapContainer>
             <TitleText>모임 관리</TitleText>
-            <SearchTable/>
+            
             <GatherCategory gatherCategory={gatherCategory} setGatherCategory={setGatherCategory}/>
             <GatherNumberTable allGatherList={gatheringList}/>
             <StatusButtonContainer>
