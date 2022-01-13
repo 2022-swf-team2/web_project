@@ -10,6 +10,7 @@ COMMON(커먼)의유저, 모임, 이벤트 정보 등을 관리하는 웹 페이
 
 ### 해야할 것
 
+- ※ 자주쓰는 함수, 컴포넌트들 정리 ※
 - 모임 관리 Detail 페이지 및 Search 기능 구현
 - Event 관리 페이지 제작 => Detail Page, Event Main Page.
 - Event DB 추가
