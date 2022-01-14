@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { IGathering } from "../../../models/gathering";
 import UserTablePage from "../../../components/UserTablePage";
 import GatherTableList from "./GatherTableList";
+import { IdeleteCheckList } from "../../User/UserScreen";
 const GatherTableWrapContainer = styled.div`
     width: 100%;
     display: flex;
@@ -28,7 +29,12 @@ const GatherTableThead = styled.thead`
     font-weight: bold;
 `;
 const GatherTableTBody = styled.tbody``;
-const GatherTable = ({ gatherList }: { gatherList: IGathering[] }) => {
+
+interface IGatherTable {
+    gatherList:IGathering[],
+}
+
+const GatherTable = ({ gatherList }:IGatherTable) => {
     const pages: number[] = [];
     const [currentPage, setCurrentPage] = useState<number>(1);
     for (let i = 0; i <= ((gatherList.length - 1) / 10); i++) {
@@ -56,7 +62,10 @@ const GatherTable = ({ gatherList }: { gatherList: IGathering[] }) => {
                     openTime={gather.openTime}
                     endTime={gather.endTime}
                     hostName={gather.host.name}
-                    over={gather.over}/>)}
+                    over={gather.over}
+                    id={gather.id}
+                    />)
+                    }
                 </GatherTableTBody>
             </GatherTableContainer>
             <UserTablePage pages={pages} currentPage={currentPage} setCurrentPage={setCurrentPage} />

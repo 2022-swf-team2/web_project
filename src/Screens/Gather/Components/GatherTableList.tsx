@@ -1,5 +1,8 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { deleteGatherListAtom } from "../../../atoms";
 import {GatherTableTd} from './GatherTable';
 
 interface IGatherTableList {
@@ -9,6 +12,7 @@ interface IGatherTableList {
     endTime:string,
     hostName:string,
     over:boolean,
+    id:string
 }
 
 const GatherTableListTr = styled.tr`
@@ -18,11 +22,17 @@ const GatherTableCheckBox = styled.input`
     height: 20px;
     width: 20px;
 `
-const GatherTableList = ({idx,writeTime,openTime,endTime,hostName,over}:IGatherTableList) => {
+const GatherTableList = ({idx,writeTime,openTime,endTime,hostName,over,id}:IGatherTableList) => {
     const navigate = useNavigate();
+    const [deleteCheckList,setDeleteCheckList] = useRecoilState(deleteGatherListAtom);
+    const checked = deleteCheckList.find((e)=>e.id===id)?.checked;
+    const checkedIdx = deleteCheckList.findIndex((e)=>e.id===id);
+    const changeHandler =(e:React.ChangeEvent<HTMLInputElement>) => {
+        setDeleteCheckList([...deleteCheckList.slice(0,checkedIdx),{id,checked:e.target.checked},...deleteCheckList.slice(checkedIdx+1)]);
+    }
     return (<GatherTableListTr >
         <GatherTableTd>
-            <GatherTableCheckBox type="checkbox" />
+            <GatherTableCheckBox type="checkbox" onChange={changeHandler} checked={checked?checked:false}/>
         </GatherTableTd>
         <GatherTableTd>{idx+1}</GatherTableTd>
         <GatherTableTd>{writeTime}</GatherTableTd>

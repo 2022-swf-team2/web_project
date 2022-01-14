@@ -7,13 +7,15 @@ import { useEffect, useState } from "react";
 import GatherNumberTable from "./Components/GatherNumberTable";
 import GatherStatusTab from "./Components/GatherStatusTab";
 import { IGathering } from "../../models/gathering";
-import { ExcelButton, UserTableButtons } from "../User/UserScreen";
+import { ExcelButton, IdeleteCheckList, UserTableButtons } from "../User/UserScreen";
 import { DeleteButton } from "../../styles/Button";
 import { GrDocumentExcel } from "react-icons/gr";
 import xlsx from 'xlsx';
 import { fetchGatherData } from "../../fetch";
 import { useRecoilState } from "recoil";
-import { gatheringListAtom } from "../../atoms";
+import { gatheringListAtom,deleteGatherListAtom } from "../../atoms";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../Firebase";
 
 const GatherWrapContainer = styled.div`
     display: flex;
@@ -36,6 +38,7 @@ const GatherScreen = () => {
     const [gatherCategory,setGatherCategory] = useState("전체");
     const [currentStatus,setCurrentStatus] = useState('all');
     const [gatheringList,setGatheringList] = useRecoilState(gatheringListAtom);
+    const [deleteCheckList,setDeleteCheckList] = useRecoilState(deleteGatherListAtom);
     const notOverGathering:IGathering[] = gatheringList.filter(e=>e.over===false);
     const overGathering:IGathering[] = gatheringList.filter(e=>e.over===true);
     const getCurrentGatherings=():IGathering[]=>{
@@ -69,18 +72,39 @@ const GatherScreen = () => {
         xlsx.utils.book_append_sheet(wb,ws,"Sheet1");
         xlsx.writeFile(wb,"Gathering.xlsx");
     }
-
-    useEffect(()=>{
-       const fetch = async()=>{
-        setGatheringList(await fetchGatherData());
+    const fetch = async()=>{
+        const getGatherList = await fetchGatherData();
+        const gatherDeleteList:IdeleteCheckList[] = [];
+        getGatherList.forEach((e)=>{
+            gatherDeleteList.push({
+                id:e.id,
+                checked:false
+            });
+        });
+        setGatheringList(getGatherList);
+        setDeleteCheckList(gatherDeleteList);
+    }
+    const deleteGatherHandler = async() => {
+        let refresh:boolean = false;
+        const filteredList:IdeleteCheckList[] = deleteCheckList.filter((e)=>e.checked===true);
+        for(const gathering of filteredList){
+                await deleteDoc(doc(db,"gathering",gathering.id));
+                refresh=true;
         }
+        console.log(refresh);   
+        if(refresh) {
+            console.log("리프레시");
+            fetch();
+        }
+    }
+    useEffect(()=>{
         fetch();
     },[]);
     return( <WrapNavigationContainer>
         {!gatheringList ? <span>Loading...</span>:
         <GatherWrapContainer>
             <TitleText>모임 관리</TitleText>
-            
+            <SearchTable searchPart={0} setList={()=>{}}/>
             <GatherCategory gatherCategory={gatherCategory} setGatherCategory={setGatherCategory}/>
             <GatherNumberTable allGatherList={gatheringList}/>
             <StatusButtonContainer>
@@ -89,7 +113,7 @@ const GatherScreen = () => {
                 <ExcelButton onClick={download}>
                 <GrDocumentExcel style={{marginRight:"20px",color:"green"}} size="32"/> 엑셀 다운
                 </ExcelButton>
-                <DeleteButton style={{width:"120px"}}>
+                <DeleteButton style={{width:"120px"}} onClick={()=>deleteGatherHandler()}>
                     삭제
                 </DeleteButton>
             </UserTableButtons>
